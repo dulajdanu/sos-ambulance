@@ -16,8 +16,10 @@ class LoginSevenPage extends StatefulWidget {
 
 class _LoginSevenPageState extends State<LoginSevenPage> {
   final GlobalKey<FormState> _loginFormKeyValue = GlobalKey<FormState>();
-  String email, passowrd;
-  bool _isLoading;
+  final GlobalKey<FormState> _singUpFormKeyValue = GlobalKey<FormState>();
+
+  String email, passowrd, uname;
+  bool _isLoading, pressed;
   String _errorMessage;
   bool error = false;
 
@@ -61,12 +63,55 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
     //                     );
   }
 
+  signup() async {
+    if (_singUpFormKeyValue.currentState.validate()) {
+      _singUpFormKeyValue.currentState.save();
+      print(uname);
+      print(email);
+      print(passowrd);
+      setState(() {
+        _isLoading = true;
+        _errorMessage = "";
+      });
+      try {
+        String userId = "";
+        print("inside try");
+        print(widget.auth);
+        userId = await widget.auth.signUp(email, passowrd, uname);
+        print("after");
+        print('Signed in: $userId');
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (userId.length > 0 && userId != null) {
+          widget.loginCallback();
+        }
+      } catch (e) {
+        // print('Error : $e');
+        print(e);
+        setState(() {
+          _isLoading = false;
+          // _errorMessage = e.message;
+          _singUpFormKeyValue.currentState.reset();
+          error = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     _errorMessage = "";
     _isLoading = false;
     super.initState();
+    pressed = false;
   }
 
   void resetForm() {
@@ -77,12 +122,30 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    if (pressed == false) {
+      return Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Colors.white,
+          body: Stack(
+            children: <Widget>[
+              _showForm(),
+              _showCircularProgress(),
+              showError()
+            ],
+          ));
+    } else {
+      return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         body: Stack(
-          children: <Widget>[_showForm(), _showCircularProgress(), showError()],
-        ));
+          children: <Widget>[
+            _showForm2(),
+            _showCircularProgress(),
+            showError()
+          ],
+        ),
+      );
+    }
   }
 
   Widget _showCircularProgress() {
@@ -273,6 +336,30 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
           SizedBox(
             height: 20,
           ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(100)),
+                    color: Color(0xffff3a5a)),
+                child: FlatButton(
+                  child: Text(
+                    "Sign Up",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      pressed = true;
+                    });
+                  },
+                ),
+              )),
+          SizedBox(
+            height: 20,
+          ),
           GestureDetector(
             onTap: () {
               // Navigator.pushReplacement(
@@ -292,6 +379,223 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
           ),
           SizedBox(
             height: 40,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _showForm2() {
+    return Form(
+      key: _singUpFormKeyValue,
+      child: ListView(
+        children: <Widget>[
+          Stack(
+            children: <Widget>[
+              ClipPath(
+                clipper: WaveClipper2(),
+                child: Container(
+                  child: Column(),
+                  width: double.infinity,
+                  height: 300,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Color(0x22ff3a5a), Color(0x22fe494d)])),
+                ),
+              ),
+              ClipPath(
+                clipper: WaveClipper3(),
+                child: Container(
+                  child: Column(),
+                  width: double.infinity,
+                  height: 300,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Color(0x44ff3a5a), Color(0x44fe494d)])),
+                ),
+              ),
+              ClipPath(
+                clipper: WaveClipper1(),
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 40,
+                      ),
+                      // Icon(
+                      //   Icons.branding_watermark,
+                      //   color: Colors.white,
+                      //   size: 60,
+                      // ),
+                      // Image(
+                      //   image: AssetImage('assets/images/logo.jpeg'),
+                      // ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      // Text(
+                      //   "Ebony Holdings",
+                      //   style: TextStyle(
+                      //       color: Colors.white,
+                      //       fontWeight: FontWeight.w700,
+                      //       fontSize: 30),
+                      // ),
+                    ],
+                  ),
+                  width: double.infinity,
+                  height: 300,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Color(0xffff3a5a), Color(0xfffe494d)])),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Material(
+              elevation: 2.0,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              child: TextFormField(
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Username is required";
+                  }
+                },
+                onSaved: (val) => uname = val.trim(),
+                cursorColor: Colors.deepOrange,
+                decoration: InputDecoration(
+                    hintText: "Username",
+                    prefixIcon: Material(
+                      elevation: 0,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      child: Icon(
+                        Icons.email,
+                        color: Colors.red,
+                      ),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Material(
+              elevation: 2.0,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              child: TextFormField(
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Email is required";
+                  }
+                },
+                onSaved: (val) => email = val.trim(),
+                cursorColor: Colors.deepOrange,
+                decoration: InputDecoration(
+                    hintText: "E Mail",
+                    prefixIcon: Material(
+                      elevation: 0,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      child: Icon(
+                        Icons.email,
+                        color: Colors.red,
+                      ),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Material(
+              elevation: 2.0,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              child: TextFormField(
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Password cannot be empty";
+                  }
+                },
+                onSaved: (val) => passowrd = val.trim(),
+                cursorColor: Colors.deepOrange,
+                decoration: InputDecoration(
+                    hintText: "Password",
+                    prefixIcon: Material(
+                      elevation: 0,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      child: Icon(
+                        Icons.lock,
+                        color: Colors.red,
+                      ),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 25,
+          ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(100)),
+                    color: Color(0xffff3a5a)),
+                child: FlatButton(
+                  child: Text(
+                    "Sign Up",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18),
+                  ),
+                  onPressed: () {
+                    // login();
+                    signup();
+                  },
+                ),
+              )),
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(100)),
+                    color: Color(0xffff3a5a)),
+                child: FlatButton(
+                  child: Text(
+                    "Back To Login",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      pressed = false;
+                    });
+                  },
+                ),
+              )),
+          SizedBox(
+            height: 20,
           ),
         ],
       ),

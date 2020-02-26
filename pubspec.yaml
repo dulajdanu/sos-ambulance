@@ -29,6 +29,7 @@ dependencies:
   intl: ^0.15.8
   firebase_auth: ^0.15.4
   shared_preferences:
+  flutter_swiper: ^1.1.6
 
 dev_dependencies:
   flutter_test:
