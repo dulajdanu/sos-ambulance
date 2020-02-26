@@ -4,10 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BaseAuth {
-  Future<String> signIn(String e_mail, String passWord);
+  Future<String> signIn(String e_mail, String passWord, bool isamb);
 
   Future<FirebaseUser> getCurrentUser();
-  Future<String> signUp(String email, String password, String uname);
+  Future<String> signUp(
+      String email, String password, String uname, bool isamb);
 
   sendEmail();
 
@@ -20,13 +21,43 @@ class Auth implements BaseAuth {
   var outlet;
   var ssaID;
 
-  Future<String> signIn(String e_mail, String passWord) async {
+  Future<String> signIn(String e_mail, String passWord, bool isamb) async {
     AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
         email: e_mail, password: passWord);
     FirebaseUser user = result.user;
     print(result.user.uid);
     print(user.email);
     print("ssss");
+    int usrflag = 0;
+    int mflag = 0;
+
+    if (isamb == false) {
+      await firestoreDb.collection('users').document(e_mail).get().then((doc) {
+        if (doc.exists) {
+          print("this is a user");
+        } else {
+          print("you are not a user");
+          usrflag = 1;
+        }
+      }).catchError((onError) {
+        print(onError);
+      });
+    } else {
+      await firestoreDb
+          .collection('medical')
+          .document(e_mail)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          print("this is a medical officer");
+        } else {
+          print("you are not a medical officer");
+          mflag = 1;
+        }
+      }).catchError((onError) {
+        print(onError);
+      });
+    }
 
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     // await prefs.setString('email', user.email);
@@ -58,8 +89,17 @@ class Auth implements BaseAuth {
     //   // outlet = docval["outlet"];
     //   // print(outlet);
     // }).catchError((onError) => print(onError));
+    if (isamb == false && usrflag == 1) {
+      return null;
+    } else if (isamb == false && usrflag == 0) {
+      return user.uid;
+    } else if (isamb == true && mflag == 1) {
+      return null;
+    } else if (isamb == true && mflag == 0) {
+      return user.uid;
+    }
 
-    return user.uid;
+    // return user.uid;
   }
 
   Future<FirebaseUser> getCurrentUser() async {
@@ -77,10 +117,27 @@ class Auth implements BaseAuth {
     return user.email;
   }
 
-  Future<String> signUp(String email, String password, String uname) async {
+  Future<String> signUp(
+      String email, String password, String uname, bool isamb) async {
     AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     FirebaseUser user = result.user;
+    if (isamb == false) {
+      firestoreDb
+          .collection('users')
+          .document(email)
+          .setData({'email': email, 'uname': uname})
+          .then((val) => {print("Account created successfully")})
+          .catchError((onError) => {print(onError)});
+    } else {
+      firestoreDb
+          .collection('medical')
+          .document(email)
+          .setData({'email': email, 'uname': uname})
+          .then((val) => {print("Account created successfully")})
+          .catchError((onError) => {print(onError)});
+    }
+
     return user.uid;
   }
 

@@ -19,9 +19,10 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
   final GlobalKey<FormState> _singUpFormKeyValue = GlobalKey<FormState>();
 
   String email, passowrd, uname;
-  bool _isLoading, pressed;
+  bool _isLoading, pressed, isPatient;
   String _errorMessage;
   bool error = false;
+  bool isAmb = false;
 
   void login() async {
     if (_loginFormKeyValue.currentState.validate()) {
@@ -36,7 +37,7 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
         String userId = "";
         print("inside try");
         print(widget.auth);
-        userId = await widget.auth.signIn(email, passowrd);
+        userId = await widget.auth.signIn(email, passowrd, isAmb);
         print("after");
         print('Signed in: $userId');
         setState(() {
@@ -77,7 +78,7 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
         String userId = "";
         print("inside try");
         print(widget.auth);
-        userId = await widget.auth.signUp(email, passowrd, uname);
+        userId = await widget.auth.signUp(email, passowrd, uname, isAmb);
         print("after");
         print('Signed in: $userId');
         setState(() {
@@ -312,7 +313,29 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
             ),
           ),
           SizedBox(
-            height: 25,
+            height: 10,
+          ),
+          Row(
+            children: <Widget>[
+              SizedBox(
+                width: 20,
+              ),
+              Checkbox(
+                  value: isAmb,
+                  onChanged: (bool val) {
+                    print(val);
+                    setState(() {
+                      isAmb = val;
+                    });
+                  }),
+              SizedBox(
+                width: 10,
+              ),
+              Text("Medical Officer")
+            ],
+          ),
+          SizedBox(
+            height: 20,
           ),
           Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
@@ -548,7 +571,26 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
             ),
           ),
           SizedBox(
-            height: 25,
+            height: 10,
+          ),
+          Row(
+            children: <Widget>[
+              SizedBox(
+                width: 20,
+              ),
+              Checkbox(
+                  value: isAmb,
+                  onChanged: (bool val) {
+                    print(val);
+                    setState(() {
+                      isAmb = val;
+                    });
+                  }),
+              SizedBox(
+                width: 10,
+              ),
+              Text("Medical Officer")
+            ],
           ),
           Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
