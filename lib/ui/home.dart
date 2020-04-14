@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sos/ui/GoogleMapWidget.dart';
 
 import '../authentication.dart';
 
@@ -45,7 +46,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body: Text("home"),
+      body: GoogleMapWidget(),
     );
   }
 }

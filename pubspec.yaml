@@ -30,6 +30,8 @@ dependencies:
   firebase_auth: ^0.15.4
   shared_preferences:
   flutter_swiper: ^1.1.6
+  google_maps_flutter: ^0.5.25+3
+
 
 dev_dependencies:
   flutter_test:
