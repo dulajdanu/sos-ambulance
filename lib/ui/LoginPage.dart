@@ -3,8 +3,10 @@
  * profile: https://github.com/sudeepthapa
   */
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:sos/ui/forgetPassword.dart';
 import '../authentication.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class LoginSevenPage extends StatefulWidget {
   LoginSevenPage({this.auth, this.loginCallback});
@@ -18,6 +20,8 @@ class LoginSevenPage extends StatefulWidget {
 class _LoginSevenPageState extends State<LoginSevenPage> {
   final GlobalKey<FormState> _loginFormKeyValue = GlobalKey<FormState>();
   final GlobalKey<FormState> _singUpFormKeyValue = GlobalKey<FormState>();
+  Geoflutterfire geo = Geoflutterfire();
+  Location location = new Location();
 
   String email, passowrd, uname;
   bool _isLoading, pressed, isPatient;
@@ -76,10 +80,13 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
         _errorMessage = "";
       });
       try {
+        var pos = await location.getLocation();
+        GeoFirePoint point =
+            geo.point(latitude: pos.latitude, longitude: pos.longitude);
         String userId = "";
         print("inside try");
         print(widget.auth);
-        userId = await widget.auth.signUp(email, passowrd, uname, isAmb);
+        userId = await widget.auth.signUp(email, passowrd, uname, isAmb, point);
         print("after");
         print('Signed in: $userId');
         setState(() {
@@ -592,18 +599,18 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
           SizedBox(
             height: 20,
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Material(
-                color: Colors.redAccent,
-                elevation: 2.0,
-                borderRadius: BorderRadius.all(Radius.circular(30)),
-                child: FlatButton(
-                    onPressed: () {
-                      print('get location');
-                    },
-                    child: Text("Get your location"))),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 32),
+          //   child: Material(
+          //       color: Colors.redAccent,
+          //       elevation: 2.0,
+          //       borderRadius: BorderRadius.all(Radius.circular(30)),
+          //       child: FlatButton(
+          //           onPressed: () {
+          //             print('get location');
+          //           },
+          //           child: Text("Get your location"))),
+          // ),
           SizedBox(
             height: 10,
           ),
