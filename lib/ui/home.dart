@@ -36,6 +36,11 @@ class _HomeState extends State<Home> {
               title: Text("LOGOUT"),
               leading: Icon(Icons.exit_to_app),
               onTap: signout,
+            ),
+            ListTile(
+              title: Text("PROFILE"),
+              leading: Icon(Icons.supervised_user_circle),
+              onTap: signout,
             )
           ],
         ),

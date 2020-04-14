@@ -3,6 +3,7 @@
  * profile: https://github.com/sudeepthapa
   */
 import 'package:flutter/material.dart';
+import 'package:sos/ui/forgetPassword.dart';
 import '../authentication.dart';
 
 class LoginSevenPage extends StatefulWidget {
@@ -125,7 +126,7 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
   Widget build(BuildContext context) {
     if (pressed == false) {
       return Scaffold(
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
           backgroundColor: Colors.white,
           body: Stack(
             children: <Widget>[
@@ -136,7 +137,7 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
           ));
     } else {
       return Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         backgroundColor: Colors.white,
         body: Stack(
           children: <Widget>[
@@ -230,13 +231,22 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
                       SizedBox(
                         height: 20,
                       ),
-                      // Text(
-                      //   "Ebony Holdings",
-                      //   style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontWeight: FontWeight.w700,
-                      //       fontSize: 30),
-                      // ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 30, right: 10),
+                        child: Text(
+                          "Emergency Ambulance System",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 30),
+                        ),
+                      ),
+                      Center(
+                        child: Icon(
+                          Icons.local_hospital,
+                          size: 90,
+                        ),
+                      )
                     ],
                   ),
                   width: double.infinity,
@@ -385,10 +395,10 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
           ),
           GestureDetector(
             onTap: () {
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => ForgetPassword()),
-              // );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => ForgetPass()),
+              );
             },
             child: Center(
               child: Text(
@@ -456,13 +466,22 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
                       SizedBox(
                         height: 20,
                       ),
-                      // Text(
-                      //   "Ebony Holdings",
-                      //   style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontWeight: FontWeight.w700,
-                      //       fontSize: 30),
-                      // ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 30, right: 10),
+                        child: Text(
+                          "Emergency Ambulance System",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 30),
+                        ),
+                      ),
+                      Center(
+                        child: Icon(
+                          Icons.local_hospital,
+                          size: 90,
+                        ),
+                      )
                     ],
                   ),
                   width: double.infinity,
@@ -569,6 +588,21 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
                         EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
               ),
             ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Material(
+                color: Colors.redAccent,
+                elevation: 2.0,
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                child: FlatButton(
+                    onPressed: () {
+                      print('get location');
+                    },
+                    child: Text("Get your location"))),
           ),
           SizedBox(
             height: 10,
