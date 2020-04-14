@@ -3,21 +3,26 @@ import 'package:sos/authentication.dart';
 import 'package:sos/root_page.dart';
 
 class ForgetPass extends StatefulWidget {
-  ForgetPass({Key key}) : super(key: key);
+  ForgetPass(this.auth);
+  final Auth auth;
 
   @override
   _ForgetPassState createState() => _ForgetPassState();
 }
 
 class _ForgetPassState extends State<ForgetPass> {
-  final GlobalKey<FormState> _loginFormKeyValue = GlobalKey<FormState>();
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  final GlobalKey<FormState> _forgetPassFormKeyValue = GlobalKey<FormState>();
   bool _isLoading = false;
   bool error = false;
   String email;
+  bool isAmb = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         backgroundColor: Colors.white,
         body: Stack(
@@ -60,7 +65,7 @@ class _ForgetPassState extends State<ForgetPass> {
 
   Widget _showForm() {
     return Form(
-      key: _loginFormKeyValue,
+      key: _forgetPassFormKeyValue,
       child: ListView(
         children: <Widget>[
           Stack(
@@ -171,14 +176,14 @@ class _ForgetPassState extends State<ForgetPass> {
               SizedBox(
                 width: 20,
               ),
-              // Checkbox(
-              //     // value: isAmb,
-              //     onChanged: (bool val) {
-              //       print(val);
-              //       setState(() {
-              //         // isAmb = val;
-              //       });
-              //     }),
+              Checkbox(
+                  value: isAmb,
+                  onChanged: (bool val) {
+                    print(val);
+                    setState(() {
+                      isAmb = val;
+                    });
+                  }),
               SizedBox(
                 width: 10,
               ),
@@ -204,6 +209,7 @@ class _ForgetPassState extends State<ForgetPass> {
                   ),
                   onPressed: () {
                     // login();
+                    resetPass();
                   },
                 ),
               )),
@@ -243,6 +249,32 @@ class _ForgetPassState extends State<ForgetPass> {
         ],
       ),
     );
+  }
+
+  resetPass() {
+    setState(() {
+      error = false;
+    });
+    if (_forgetPassFormKeyValue.currentState.validate()) {
+      _forgetPassFormKeyValue.currentState.save();
+      print(email);
+      print(isAmb);
+
+      try {
+        widget.auth.sendResetMail(email).then((onValue) {
+          _scaffoldKey.currentState.showSnackBar(
+              new SnackBar(content: new Text("Please check your mailbox")));
+          email = "";
+        });
+      } catch (e) {
+        _scaffoldKey.currentState
+            .showSnackBar(new SnackBar(content: new Text(e.toString())));
+      }
+    } else {
+      setState(() {
+        error = true;
+      });
+    }
   }
 }
 

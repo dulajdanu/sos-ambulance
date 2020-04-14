@@ -397,7 +397,7 @@ class _LoginSevenPageState extends State<LoginSevenPage> {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => ForgetPass()),
+                MaterialPageRoute(builder: (context) => ForgetPass(Auth())),
               );
             },
             child: Center(
