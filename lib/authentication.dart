@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BaseAuth {
   Future<String> signIn(String e_mail, String passWord, bool isamb);
 
   Future<FirebaseUser> getCurrentUser();
-  Future<String> signUp(
-      String email, String password, String uname, bool isamb);
+  Future<String> signUp(String email, String password, String uname, bool isamb,
+      GeoFirePoint point);
 
   sendEmail();
 
@@ -119,25 +120,25 @@ class Auth implements BaseAuth {
     return user.email;
   }
 
-  Future<String> signUp(
-      String email, String password, String uname, bool isamb) async {
+  Future<String> signUp(String email, String password, String uname, bool isamb,
+      GeoFirePoint point) async {
     AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     FirebaseUser user = result.user;
     if (isamb == false) {
-      firestoreDb
-          .collection('users')
-          .document(email)
-          .setData({'email': email, 'uname': uname})
-          .then((val) => {print("Account created successfully")})
-          .catchError((onError) => {print(onError)});
+      firestoreDb.collection('users').document(email).setData(
+          {'email': email, 'uname': uname, 'position': point.data}).then((val) {
+        print("Account created successfully");
+      }).catchError((onError) {
+        print(onError.toString());
+      });
     } else {
-      firestoreDb
-          .collection('medical')
-          .document(email)
-          .setData({'email': email, 'uname': uname})
-          .then((val) => {print("Account created successfully")})
-          .catchError((onError) => {print(onError)});
+      firestoreDb.collection('medical').document(email).setData(
+          {'email': email, 'uname': uname, 'position': point.data}).then((val) {
+        print("Account created successfully");
+      }).catchError((onError) {
+        print(onError);
+      });
     }
 
     return user.uid;
