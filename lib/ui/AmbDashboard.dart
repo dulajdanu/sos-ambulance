@@ -189,30 +189,77 @@ class _AmbDashboardState extends State<AmbDashboard> {
                     Container(
                       height: 190,
                       color: Colors.yellow,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          ListTile(
-                            // title: Text(
-                            //   "0 app",
-                            //   style:
-                            //       Theme.of(context).textTheme.display1.copyWith(
-                            //             fontSize: 24.0,
-                            //             color: Colors.black,
-                            //           ),
-                            // ),
-                            trailing: Icon(
-                              Icons.crop_landscape,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
-                            child: Text(
-                              'No appointments now',
-                            ),
-                          )
-                        ],
+                      child: StreamBuilder(
+                        stream: firestoreDb
+                            .collection('medical')
+                            .document(email)
+                            .collection('orders')
+                            .document(dateToday)
+                            .collection('appointments')
+                            .where('status', isEqualTo: 0)
+                            .snapshots(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.active) {
+                            if (snapshot.data.documents.length != 0) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  ListTile(
+                                    // title: Text(
+                                    //   "0 app",
+                                    //   style:
+                                    //       Theme.of(context).textTheme.display1.copyWith(
+                                    //             fontSize: 24.0,
+                                    //             color: Colors.black,
+                                    //           ),
+                                    // ),
+                                    trailing: Icon(
+                                      Icons.crop_landscape,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 16.0),
+                                    child: Text(
+                                      'You have a appointment now',
+                                    ),
+                                  )
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  ListTile(
+                                    // title: Text(
+                                    //   "0 app",
+                                    //   style:
+                                    //       Theme.of(context).textTheme.display1.copyWith(
+                                    //             fontSize: 24.0,
+                                    //             color: Colors.black,
+                                    //           ),
+                                    // ),
+                                    trailing: Icon(
+                                      Icons.crop_landscape,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 16.0),
+                                    child: Text(
+                                      'No appointments now',
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
+                          }
+                          return Container(
+                            child: Text("wait"),
+                          );
+                        },
                       ),
                     ),
                   ],

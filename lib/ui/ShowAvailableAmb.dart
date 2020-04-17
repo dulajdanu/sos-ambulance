@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowAvailable extends StatefulWidget {
   ShowAvailable(this.myLoc);
@@ -12,9 +14,26 @@ class ShowAvailable extends StatefulWidget {
 }
 
 class _ShowAvailableState extends State<ShowAvailable> {
-  // final fireStoreDb = Firestore.instance;
+  final fireStoreDb = Firestore.instance;
   Geoflutterfire geo = Geoflutterfire();
   var collectionReference = Firestore.instance.collection('medical');
+  static var now = new DateTime.now();
+  var dateToday = DateFormat("dd-MM-yyyy").format(now);
+  String email, uname;
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      email = prefs.getString('email');
+      uname = prefs.getString('uname');
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +72,7 @@ class _ShowAvailableState extends State<ShowAvailable> {
                         return GestureDetector(
                           onTap: () {
                             print('this ambulance selected');
+                            addAppointment(snapshot.data[index].documentID);
                           },
                           child: ListTile(
                             title: Text(snapshot.data[index].documentID),
@@ -74,5 +94,26 @@ class _ShowAvailableState extends State<ShowAvailable> {
             },
           ),
         ));
+  }
+
+  addAppointment(String ambulanceId) async {
+    await fireStoreDb
+        .collection('medical')
+        .document(ambulanceId)
+        .collection('orders')
+        .document(dateToday)
+        .setData({}, merge: true);
+
+    await fireStoreDb
+        .collection('medical')
+        .document(ambulanceId)
+        .collection('orders')
+        .document(dateToday)
+        .collection('appointments')
+        .add({'email': email, 'uname': uname, 'status': 0}).then((onValue) {
+      print("new appointment added succesffuly");
+    }).catchError((onError) {
+      print(onError.toString());
+    });
   }
 }
