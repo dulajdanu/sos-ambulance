@@ -1,7 +1,3 @@
-/**
- * Author: Sudip Thapa  
- * profile: https://github.com/sudeepthapa
-  */
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:sos/ui/forgetPassword.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sos/ui/AmbDashboard.dart';
 import 'package:sos/ui/GoogleMapWidget.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../authentication.dart';
 
 class Home extends StatefulWidget {
@@ -16,6 +17,28 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool isUser;
+
+  getUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('user') == true) {
+      setState(() {
+        isUser = true;
+      });
+    } else {
+      setState(() {
+        isUser = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    getUserInfo();
+
+    super.initState();
+  }
+
   Future<void> signout() async {
     Navigator.pop(context);
     await widget.auth.signOut();
@@ -25,6 +48,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade800,
       appBar: AppBar(
         title: Text("SOS APP"),
       ),
@@ -46,7 +70,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body: GoogleMapWidget(),
+      body: (isUser == true) ? GoogleMapWidget() : AmbDashboard(),
     );
   }
 }

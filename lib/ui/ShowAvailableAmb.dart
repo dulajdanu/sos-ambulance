@@ -41,14 +41,25 @@ class _ShowAvailableState extends State<ShowAvailable> {
                 } else {
                   print(snapshot.data);
 
-                  // DocumentSnapshot ds = snapshot.data.first;
                   // print(ds.data);
                   return ListView.builder(
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        title: Text(snapshot.data[index].documentID),
-                      );
+                      print('printing documents');
+                      DocumentSnapshot ds = snapshot.data[index];
+                      if (ds.data['online'] == false) {
+                        return Container();
+                      } else {
+                        return GestureDetector(
+                          onTap: () {
+                            print('this ambulance selected');
+                          },
+                          child: ListTile(
+                            title: Text(snapshot.data[index].documentID),
+                            // subtitle: Text(snapshot.data.),
+                          ),
+                        );
+                      }
                     },
                   );
                   // return Container(

@@ -30,13 +30,15 @@ class Auth implements BaseAuth {
     FirebaseUser user = result.user;
     print(result.user.uid);
     print(user.email);
-    print("ssss");
     int usrflag = 0;
     int mflag = 0;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String uname;
 
     if (isamb == false) {
       await firestoreDb.collection('users').document(e_mail).get().then((doc) {
         if (doc.exists) {
+          uname = doc.data['uname'];
           print("this is a user");
         } else {
           print("you are not a user");
@@ -52,6 +54,8 @@ class Auth implements BaseAuth {
           .get()
           .then((doc) {
         if (doc.exists) {
+          uname = doc.data['uname'];
+
           print("this is a medical officer");
         } else {
           print("you are not a medical officer");
@@ -62,43 +66,19 @@ class Auth implements BaseAuth {
       });
     }
 
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await prefs.setString('email', user.email);
-    // print("printing e mail of user " + user.email);
-
-    // firestoreDb.collection('users').document(user.email).get().then((docval) {
-    //   print(docval.data);
-    //   if (docval.exists) {
-    //     // outlet = docval["outlet"];
-    //     ssaID = docval["ID"];
-    //     print(ssaID);
-    //     outlet = docval["outlet"];
-
-    //     prefs.setString("outlet", outlet);
-
-    //     prefs.setString('ID', ssaID);
-    //     prefs.setString('uid', user.uid);
-    //     prefs.setString("AuthID", result.user.uid);
-
-    //     print(prefs.getString('ID'));
-    //     prefs.setString('usrMail', user.email);
-    //     prefs.setString('picUrl',
-    //         'https://png.pngtree.com/element_our/png/20181206/users-vector-icon-png_260862.jpg');
-    //   } else {
-    //     print("no document of the user");
-    //     return;
-    //   }
-
-    //   // outlet = docval["outlet"];
-    //   // print(outlet);
-    // }).catchError((onError) => print(onError));
     if (isamb == false && usrflag == 1) {
       return null;
     } else if (isamb == false && usrflag == 0) {
+      prefs.setBool('user', true);
+      prefs.setString('email', user.email);
+      prefs.setString('uname', uname);
       return user.uid;
     } else if (isamb == true && mflag == 1) {
       return null;
     } else if (isamb == true && mflag == 0) {
+      prefs.setBool('user', false);
+      prefs.setString('email', user.email);
+      prefs.setString('uname', uname);
       return user.uid;
     }
 
