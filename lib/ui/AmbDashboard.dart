@@ -1,10 +1,8 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AmbDashboard extends StatefulWidget {
   AmbDashboard({Key key}) : super(key: key);
@@ -315,8 +313,59 @@ class _AmbDashboardState extends State<AmbDashboard> {
             ],
           ),
         ),
-        Center(
-          child: Text("ammo"),
+        StreamBuilder(
+          stream: firestoreDb
+              .collection('medical')
+              .document(email)
+              .collection('orders')
+              .document(dateToday)
+              .collection('appointments')
+              // .where('status', isEqualTo: 0)
+              .orderBy('time', descending: true)
+              .snapshots(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.active) {
+              print(snapshot.hasData);
+              print(snapshot.data.documents);
+              if (!snapshot.data.documents.isEmpty) {
+                DocumentSnapshot documentSnapshotOfthePatient;
+                for (DocumentSnapshot doc in snapshot.data.documents) {
+                  if (doc['status'] == 0) {
+                    documentSnapshotOfthePatient = doc;
+                    break;
+                  }
+                }
+
+                // print(snapshot.data.documents.first.data);
+                return Container(
+                    height: 150,
+                    width: 200,
+                    decoration: BoxDecoration(color: Colors.white),
+                    child: Column(
+                      children: <Widget>[
+                        Text("A patient needs your help"),
+                        Text(documentSnapshotOfthePatient['email']),
+                        Row(
+                          children: <Widget>[
+                            FlatButton(
+                                color: Colors.green,
+                                onPressed: () {},
+                                child: Text("Accept")),
+                            FlatButton(
+                                color: Colors.redAccent,
+                                onPressed: () {},
+                                child: Text("Cancel"))
+                          ],
+                        )
+                      ],
+                    ));
+              } else {
+                return Container();
+              }
+            } else {
+              return Container();
+            }
+          },
         ),
       ],
     );

@@ -110,7 +110,12 @@ class _ShowAvailableState extends State<ShowAvailable> {
         .collection('orders')
         .document(dateToday)
         .collection('appointments')
-        .add({'email': email, 'uname': uname, 'status': 0}).then((onValue) {
+        .add({
+      'email': email,
+      'uname': uname,
+      'status': 0,
+      'time': FieldValue.serverTimestamp()
+    }).then((onValue) {
       print("new appointment added succesffuly");
     }).catchError((onError) {
       print(onError.toString());
