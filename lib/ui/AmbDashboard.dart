@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -53,222 +55,270 @@ class _AmbDashboardState extends State<AmbDashboard> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: <Widget>[
-          _buildHeader(),
-          const SizedBox(height: 50.0),
-          Row(
+    return Stack(
+      children: <Widget>[
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
             children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: 190,
-                      color: Colors.blue,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                              child: Column(
+              _buildHeader(),
+              const SizedBox(height: 50.0),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 190,
+                          color: Colors.blue,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Status',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.white70),
-                              ),
-                              Switch(
-                                value: isOnline,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isOnline = value;
-                                    if (isOnline == false) {
-                                      onlineStatus = "Offline";
-                                      changeOnlineStatus(false);
-                                    } else {
-                                      onlineStatus = "Online";
-                                      changeOnlineStatus(true);
-                                    }
-                                  });
-                                },
-                                activeTrackColor: Colors.lightGreenAccent,
-                                activeColor: Colors.green,
-                              ),
-                              Text(onlineStatus,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white70))
+                              Expanded(
+                                  child: Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    'Status',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: Colors.white70),
+                                  ),
+                                  Switch(
+                                    value: isOnline,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isOnline = value;
+                                        if (isOnline == false) {
+                                          onlineStatus = "Offline";
+                                          changeOnlineStatus(false);
+                                        } else {
+                                          onlineStatus = "Online";
+                                          changeOnlineStatus(true);
+                                        }
+                                      });
+                                    },
+                                    activeTrackColor: Colors.lightGreenAccent,
+                                    activeColor: Colors.green,
+                                  ),
+                                  Text(onlineStatus,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                          color: Colors.white70))
+                                ],
+                              ))
                             ],
-                          ))
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10.0),
-                    Container(
-                      height: 120,
-                      color: Colors.green,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          ListTile(
-                            title: Text(
-                              "Date",
-                              style:
-                                  Theme.of(context).textTheme.display1.copyWith(
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        Container(
+                          height: 120,
+                          color: Colors.green,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(
+                                  "Date",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .display1
+                                      .copyWith(
                                         color: Colors.white,
                                         fontSize: 24.0,
                                       ),
-                            ),
-                            trailing: Icon(
-                              Icons.calendar_today,
-                              color: Colors.white,
-                            ),
+                                ),
+                                trailing: Icon(
+                                  Icons.calendar_today,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Text(
+                                  dateToday,
+                                  style: whiteText,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Text(
+                                  "0 visits today",
+                                  style: whiteText,
+                                ),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
-                            child: Text(
-                              dateToday,
-                              style: whiteText,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
-                            child: Text(
-                              "0 visits today",
-                              style: whiteText,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10.0),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: 120,
-                      color: Colors.red,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          ListTile(
-                            title: Text(
-                              "2,430",
-                              style:
-                                  Theme.of(context).textTheme.display1.copyWith(
-                                        color: Colors.white,
-                                        fontSize: 24.0,
+                  ),
+                  const SizedBox(width: 10.0),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 120,
+                          color: Colors.red,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              StreamBuilder(
+                                stream: firestoreDb
+                                    .collection('medical')
+                                    .document(email)
+                                    .snapshots(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                    if (snapshot.hasData) {
+                                      return ListTile(
+                                        title: Text(
+                                          snapshot.data['visits'].toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .display1
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontSize: 24.0,
+                                              ),
+                                        ),
+                                        trailing: Icon(
+                                          Icons.check_box,
+                                          color: Colors.white,
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  } else {
+                                    return ListTile(
+                                      title: Text(
+                                        "Loading",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .display1
+                                            .copyWith(
+                                              color: Colors.white,
+                                              fontSize: 24.0,
+                                            ),
                                       ),
-                            ),
-                            trailing: Icon(
-                              Icons.check_box,
-                              color: Colors.white,
-                            ),
+                                      trailing: Icon(
+                                        Icons.check_box,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Text(
+                                  'No of visits',
+                                  style: whiteText,
+                                ),
+                              )
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
-                            child: Text(
-                              'No of visits',
-                              style: whiteText,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10.0),
-                    Container(
-                      height: 190,
-                      color: Colors.yellow,
-                      child: StreamBuilder(
-                        stream: firestoreDb
-                            .collection('medical')
-                            .document(email)
-                            .collection('orders')
-                            .document(dateToday)
-                            .collection('appointments')
-                            .where('status', isEqualTo: 0)
-                            .snapshots(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.active) {
-                            if (snapshot.data.documents.length != 0) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  ListTile(
-                                    // title: Text(
-                                    //   "0 app",
-                                    //   style:
-                                    //       Theme.of(context).textTheme.display1.copyWith(
-                                    //             fontSize: 24.0,
-                                    //             color: Colors.black,
-                                    //           ),
-                                    // ),
-                                    trailing: Icon(
-                                      Icons.crop_landscape,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 16.0),
-                                    child: Text(
-                                      'You have a appointment now',
-                                    ),
-                                  )
-                                ],
+                        ),
+                        const SizedBox(height: 10.0),
+                        Container(
+                          height: 190,
+                          color: Colors.yellow,
+                          child: StreamBuilder(
+                            stream: firestoreDb
+                                .collection('medical')
+                                .document(email)
+                                .collection('orders')
+                                .document(dateToday)
+                                .collection('appointments')
+                                .where('status', isEqualTo: 0)
+                                .snapshots(),
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.active) {
+                                if (snapshot.data.documents.length != 0) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      ListTile(
+                                        // title: Text(
+                                        //   "0 app",
+                                        //   style:
+                                        //       Theme.of(context).textTheme.display1.copyWith(
+                                        //             fontSize: 24.0,
+                                        //             color: Colors.black,
+                                        //           ),
+                                        // ),
+                                        trailing: Icon(
+                                          Icons.crop_landscape,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 16.0),
+                                        child: Text(
+                                          'You have a appointment now',
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                } else {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      ListTile(
+                                        // title: Text(
+                                        //   "0 app",
+                                        //   style:
+                                        //       Theme.of(context).textTheme.display1.copyWith(
+                                        //             fontSize: 24.0,
+                                        //             color: Colors.black,
+                                        //           ),
+                                        // ),
+                                        trailing: Icon(
+                                          Icons.crop_landscape,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 16.0),
+                                        child: Text(
+                                          'No appointments now',
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                }
+                              }
+                              return Container(
+                                child: Text("wait"),
                               );
-                            } else {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  ListTile(
-                                    // title: Text(
-                                    //   "0 app",
-                                    //   style:
-                                    //       Theme.of(context).textTheme.display1.copyWith(
-                                    //             fontSize: 24.0,
-                                    //             color: Colors.black,
-                                    //           ),
-                                    // ),
-                                    trailing: Icon(
-                                      Icons.crop_landscape,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 16.0),
-                                    child: Text(
-                                      'No appointments now',
-                                    ),
-                                  )
-                                ],
-                              );
-                            }
-                          }
-                          return Container(
-                            child: Text("wait"),
-                          );
-                        },
-                      ),
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  )
+                ],
               )
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        Center(
+          child: Text("ammo"),
+        ),
+      ],
     );
   }
 
