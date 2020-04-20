@@ -52,6 +52,29 @@ class _AmbDashboardState extends State<AmbDashboard> {
     });
   }
 
+  cancelAppointment(String docID) {
+    print(docID);
+    setState(() {
+      firestoreDb
+          .collection('medical')
+          .document(email)
+          .collection('orders')
+          .document(dateToday)
+          .collection('appointments')
+          .document(docID)
+          .updateData({'status': 2}).then((onValue) {
+        print("you cancelled the appointment successfully");
+      }).catchError((onError) {
+        print(onError.toString());
+      });
+    });
+  }
+
+  acceptAppointment(String docID) {
+    print("you have accepted the appointment");
+    print(docID);
+  }
+
   Widget _buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
@@ -313,59 +336,94 @@ class _AmbDashboardState extends State<AmbDashboard> {
             ],
           ),
         ),
-        StreamBuilder(
-          stream: firestoreDb
-              .collection('medical')
-              .document(email)
-              .collection('orders')
-              .document(dateToday)
-              .collection('appointments')
-              // .where('status', isEqualTo: 0)
-              .orderBy('time', descending: true)
-              .snapshots(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.active) {
-              print(snapshot.hasData);
-              print(snapshot.data.documents);
-              if (!snapshot.data.documents.isEmpty) {
-                DocumentSnapshot documentSnapshotOfthePatient;
-                for (DocumentSnapshot doc in snapshot.data.documents) {
-                  if (doc['status'] == 0) {
-                    documentSnapshotOfthePatient = doc;
-                    break;
+        Center(
+          child: StreamBuilder(
+            stream: firestoreDb
+                .collection('medical')
+                .document(email)
+                .collection('orders')
+                .document(dateToday)
+                .collection('appointments')
+                // .where('status', isEqualTo: 0)
+                .orderBy('time', descending: true)
+                .snapshots(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                print(snapshot.hasData);
+                print(snapshot.data.documents);
+                if (!snapshot.data.documents.isEmpty) {
+                  DocumentSnapshot documentSnapshotOfthePatient;
+                  for (DocumentSnapshot doc in snapshot.data.documents) {
+                    if (doc['status'] == 0) {
+                      documentSnapshotOfthePatient = doc;
+                      break;
+                    }
                   }
-                }
-
-                // print(snapshot.data.documents.first.data);
-                return Container(
-                    height: 150,
-                    width: 200,
-                    decoration: BoxDecoration(color: Colors.white),
-                    child: Column(
-                      children: <Widget>[
-                        Text("A patient needs your help"),
-                        Text(documentSnapshotOfthePatient['email']),
-                        Row(
+                  if (documentSnapshotOfthePatient != null) {
+                    return Container(
+                        height: 250,
+                        width: 250,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            FlatButton(
-                                color: Colors.green,
-                                onPressed: () {},
-                                child: Text("Accept")),
-                            FlatButton(
-                                color: Colors.redAccent,
-                                onPressed: () {},
-                                child: Text("Cancel"))
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Text(
+                                "A patient needs your help",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(documentSnapshotOfthePatient['email']),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                FlatButton(
+                                    color: Colors.green,
+                                    onPressed: () {
+                                      acceptAppointment(
+                                          documentSnapshotOfthePatient
+                                              .documentID);
+                                    },
+                                    child: Text("Accept")),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                FlatButton(
+                                    color: Colors.redAccent,
+                                    onPressed: () {
+                                      cancelAppointment(
+                                          documentSnapshotOfthePatient
+                                              .documentID);
+                                    },
+                                    child: Text("Cancel"))
+                              ],
+                            )
                           ],
-                        )
-                      ],
-                    ));
+                        ));
+                  } else {
+                    return Container();
+                  }
+
+                  // print(snapshot.data.documents.first.data);
+
+                } else {
+                  return Container();
+                }
               } else {
                 return Container();
               }
-            } else {
-              return Container();
-            }
-          },
+            },
+          ),
         ),
       ],
     );
