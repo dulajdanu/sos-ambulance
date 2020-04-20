@@ -106,15 +106,25 @@ class Auth implements BaseAuth {
         email: email, password: password);
     FirebaseUser user = result.user;
     if (isamb == false) {
-      firestoreDb.collection('users').document(email).setData(
-          {'email': email, 'uname': uname, 'position': point.data}).then((val) {
+      firestoreDb.collection('users').document(email).setData({
+        'email': email,
+        'uname': uname,
+        'position': point.data,
+        'online': true,
+        'visits': 0
+      }).then((val) {
         print("Account created successfully");
       }).catchError((onError) {
         print(onError.toString());
       });
     } else {
-      firestoreDb.collection('medical').document(email).setData(
-          {'email': email, 'uname': uname, 'position': point.data}).then((val) {
+      firestoreDb.collection('medical').document(email).setData({
+        'email': email,
+        'uname': uname,
+        'position': point.data,
+        'online': true,
+        'visits': 0
+      }).then((val) {
         print("Account created successfully");
       }).catchError((onError) {
         print(onError);

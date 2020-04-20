@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'AppointmentPage.dart';
 
 class AmbDashboard extends StatefulWidget {
   AmbDashboard({Key key}) : super(key: key);
@@ -73,6 +74,26 @@ class _AmbDashboardState extends State<AmbDashboard> {
   acceptAppointment(String docID) {
     print("you have accepted the appointment");
     print(docID);
+    setState(() {
+      firestoreDb
+          .collection('medical')
+          .document(email)
+          .collection('orders')
+          .document(dateToday)
+          .collection('appointments')
+          .document(docID)
+          .updateData({'status': 3}).then((onValue) {
+        print("you sccepted the appointment successfully");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AppointmentPage(
+                      docID: docID,
+                    )));
+      }).catchError((onError) {
+        print(onError.toString());
+      });
+    });
   }
 
   Widget _buildBody(BuildContext context) {
