@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowAvailable extends StatefulWidget {
@@ -20,6 +21,9 @@ class _ShowAvailableState extends State<ShowAvailable> {
   static var now = new DateTime.now();
   var dateToday = DateFormat("dd-MM-yyyy").format(now);
   String email, uname;
+  Location location = new Location();
+  LocationData _locationData;
+
   getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -30,7 +34,6 @@ class _ShowAvailableState extends State<ShowAvailable> {
 
   @override
   void initState() {
-    // TODO: implement initState
     getData();
     super.initState();
   }
@@ -97,6 +100,8 @@ class _ShowAvailableState extends State<ShowAvailable> {
   }
 
   addAppointment(String ambulanceId) async {
+    _locationData = await location.getLocation();
+
     await fireStoreDb
         .collection('medical')
         .document(ambulanceId)
@@ -114,7 +119,9 @@ class _ShowAvailableState extends State<ShowAvailable> {
       'email': email,
       'uname': uname,
       'status': 0,
-      'time': FieldValue.serverTimestamp()
+      'time': FieldValue.serverTimestamp(),
+      'lat': _locationData.latitude,
+      'lon': _locationData.longitude,
     }).then((onValue) {
       print("new appointment added succesffuly");
     }).catchError((onError) {

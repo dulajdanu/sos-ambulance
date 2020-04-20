@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -71,7 +72,7 @@ class _AmbDashboardState extends State<AmbDashboard> {
     });
   }
 
-  acceptAppointment(String docID) {
+  acceptAppointment(String docID, LatLng latLng) {
     print("you have accepted the appointment");
     print(docID);
     setState(() {
@@ -89,6 +90,7 @@ class _AmbDashboardState extends State<AmbDashboard> {
             MaterialPageRoute(
                 builder: (context) => AppointmentPage(
                       docID: docID,
+                      latLng: latLng,
                     )));
       }).catchError((onError) {
         print(onError.toString());
@@ -412,8 +414,12 @@ class _AmbDashboardState extends State<AmbDashboard> {
                                     color: Colors.green,
                                     onPressed: () {
                                       acceptAppointment(
-                                          documentSnapshotOfthePatient
-                                              .documentID);
+                                        documentSnapshotOfthePatient.documentID,
+                                        LatLng(
+                                            documentSnapshotOfthePatient['lat'],
+                                            documentSnapshotOfthePatient[
+                                                'lon']),
+                                      );
                                     },
                                     child: Text("Accept")),
                                 SizedBox(

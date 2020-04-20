@@ -35,6 +35,7 @@ dependencies:
   location: ^3.0.2
   rxdart: 
   font_awesome_flutter: ^8.8.1
+  maps_launcher: ^1.2.0
 
   map_controller: ^0.7.1
   rflutter_alert: ^1.0.3
