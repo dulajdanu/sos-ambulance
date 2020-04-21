@@ -72,7 +72,7 @@ class _AmbDashboardState extends State<AmbDashboard> {
     });
   }
 
-  acceptAppointment(String docID, LatLng latLng) {
+  acceptAppointment(String docID, LatLng latLng, String patientMail) {
     print("you have accepted the appointment");
     print(docID);
     setState(() {
@@ -91,6 +91,7 @@ class _AmbDashboardState extends State<AmbDashboard> {
                 builder: (context) => AppointmentPage(
                       docID: docID,
                       latLng: latLng,
+                      patientEmail: patientMail,
                     )));
       }).catchError((onError) {
         print(onError.toString());
@@ -345,8 +346,30 @@ class _AmbDashboardState extends State<AmbDashboard> {
                                   );
                                 }
                               }
-                              return Container(
-                                child: Text("wait"),
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  ListTile(
+                                    // title: Text(
+                                    //   "0 app",
+                                    //   style:
+                                    //       Theme.of(context).textTheme.display1.copyWith(
+                                    //             fontSize: 24.0,
+                                    //             color: Colors.black,
+                                    //           ),
+                                    // ),
+                                    trailing: Icon(
+                                      Icons.crop_landscape,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 16.0),
+                                    child: Text(
+                                      'Loading data',
+                                    ),
+                                  )
+                                ],
                               );
                             },
                           ),
@@ -414,12 +437,15 @@ class _AmbDashboardState extends State<AmbDashboard> {
                                     color: Colors.green,
                                     onPressed: () {
                                       acceptAppointment(
-                                        documentSnapshotOfthePatient.documentID,
-                                        LatLng(
-                                            documentSnapshotOfthePatient['lat'],
-                                            documentSnapshotOfthePatient[
-                                                'lon']),
-                                      );
+                                          documentSnapshotOfthePatient
+                                              .documentID,
+                                          LatLng(
+                                              documentSnapshotOfthePatient[
+                                                  'lat'],
+                                              documentSnapshotOfthePatient[
+                                                  'lon']),
+                                          documentSnapshotOfthePatient[
+                                              'email']);
                                     },
                                     child: Text("Accept")),
                                 SizedBox(
