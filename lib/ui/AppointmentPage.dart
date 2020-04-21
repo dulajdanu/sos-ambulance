@@ -23,6 +23,10 @@ class _AppointmentPageState extends State<AppointmentPage> {
       body: Center(
         child: Column(
           children: <Widget>[
+            Text("Patient details"),
+            SizedBox(
+              height: 20,
+            ),
             Text(" Patient e mail"),
             Text(widget.patientEmail),
             FlatButton(
