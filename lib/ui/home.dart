@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sos/ui/AmbDashboard.dart';
 import 'package:sos/ui/GoogleMapWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sos/ui/contacts.dart';
 import '../authentication.dart';
 
 class Home extends StatefulWidget {
@@ -18,16 +19,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isUser;
+  String userMail;
 
   getUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getBool('user') == true) {
       setState(() {
         isUser = true;
+        userMail = prefs.getString('email');
       });
     } else {
       setState(() {
         isUser = false;
+        userMail = prefs.getString('email');
       });
     }
   }
@@ -56,17 +60,39 @@ class _HomeState extends State<Home> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(child: Text("SOS APP")),
-            ListTile(
-              title: Text("LOGOUT"),
-              leading: Icon(Icons.exit_to_app),
-              onTap: signout,
+            DrawerHeader(
+                decoration: BoxDecoration(color: Colors.blue),
+                child: Icon(
+                  Icons.person,
+                  size: 80,
+                )),
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                ListTile(
+                  title: Text("PROFILE"),
+                  leading: Icon(Icons.supervised_user_circle),
+                  onTap: signout,
+                ),
+                ListTile(
+                  title: Text("CONTACTS"),
+                  leading: Icon(Icons.call),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ContactsWidget(
+                                  email: userMail,
+                                )));
+                  },
+                ),
+                ListTile(
+                  title: Text("LOGOUT"),
+                  leading: Icon(Icons.exit_to_app),
+                  onTap: signout,
+                ),
+              ],
             ),
-            ListTile(
-              title: Text("PROFILE"),
-              leading: Icon(Icons.supervised_user_circle),
-              onTap: signout,
-            )
           ],
         ),
       ),

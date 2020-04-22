@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos/ui/ShowAvailableAmb.dart';
 
 class GoogleMapWidget extends StatefulWidget {
@@ -32,6 +34,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
   GoogleMapController mapController;
 
   final LatLng _center = const LatLng(7.8731, 80.7718);
+  bool contacts;
 
   // void _onMapCreated(GoogleMapController controller) {
   //   mapController = controller;
@@ -39,10 +42,18 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
 
   Completer<GoogleMapController> _controller = Completer();
 
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      contacts = prefs.getBool('contacts');
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getData();
   }
 
   @override
@@ -79,6 +90,32 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 20),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              color: Colors.black,
+              icon: Icon(Icons.call),
+              onPressed: () {
+                print("icon button presssed");
+                if (contacts == false) {
+                  Fluttertoast.showToast(
+                      msg: "You don't have any contacts",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                } else {
+                  print("ypu have contacts");
+                }
+              },
+              iconSize: 60,
+            ),
+          ),
+        )
         // Align(
         //     alignment: Alignment.bottomRight,
         //     child: Slider(

@@ -72,6 +72,8 @@ class Auth implements BaseAuth {
       prefs.setBool('user', true);
       prefs.setString('email', user.email);
       prefs.setString('uname', uname);
+      prefs.setBool('contacts', false);
+
       return user.uid;
     } else if (isamb == true && mflag == 1) {
       return null;
@@ -79,6 +81,8 @@ class Auth implements BaseAuth {
       prefs.setBool('user', false);
       prefs.setString('email', user.email);
       prefs.setString('uname', uname);
+      prefs.setBool('contacts', false);
+
       return user.uid;
     }
 
@@ -105,6 +109,8 @@ class Auth implements BaseAuth {
     AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     FirebaseUser user = result.user;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     if (isamb == false) {
       firestoreDb.collection('users').document(email).setData({
         'email': email,
@@ -114,6 +120,10 @@ class Auth implements BaseAuth {
         'visits': 0
       }).then((val) {
         print("Account created successfully");
+        prefs.setBool('user', true);
+        prefs.setString('email', user.email);
+        prefs.setString('uname', uname);
+        prefs.setBool('contacts', false);
       }).catchError((onError) {
         print(onError.toString());
       });
@@ -126,6 +136,10 @@ class Auth implements BaseAuth {
         'visits': 0
       }).then((val) {
         print("Account created successfully");
+        prefs.setBool('user', false);
+        prefs.setString('email', user.email);
+        prefs.setString('uname', uname);
+        prefs.setBool('contacts', false);
       }).catchError((onError) {
         print(onError);
       });
