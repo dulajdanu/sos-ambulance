@@ -9,6 +9,7 @@ import 'package:location/location.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos/ui/ShowAvailableAmb.dart';
+import 'package:sos/ui/contacts.dart';
 
 class GoogleMapWidget extends StatefulWidget {
   GoogleMapWidget({Key key}) : super(key: key);
@@ -97,9 +98,11 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
             child: IconButton(
               color: Colors.red,
               icon: Icon(Icons.call),
-              onPressed: () {
+              onPressed: () async {
                 print("icon button presssed");
-                if (contacts == false) {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                if (prefs.getBool('contacts') == false) {
                   Fluttertoast.showToast(
                       msg: "You don't have any contacts",
                       toastLength: Toast.LENGTH_SHORT,
@@ -109,7 +112,11 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
                       textColor: Colors.white,
                       fontSize: 16.0);
                 } else {
-                  print("ypu have contacts");
+                  print("you have contacts");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ContactsWidget()));
                 }
               },
               iconSize: 40,

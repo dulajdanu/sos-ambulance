@@ -27,6 +27,7 @@ class _ContactsWidgetState extends State<ContactsWidget> {
       print("inside if");
       setState(() {
         contacts = prefs.getStringList('contactsList');
+        prefs.setBool('contacts', true);
       });
     } else {
       print("inside else");
