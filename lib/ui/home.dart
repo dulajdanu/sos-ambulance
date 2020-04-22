@@ -72,20 +72,22 @@ class _HomeState extends State<Home> {
                 ListTile(
                   title: Text("PROFILE"),
                   leading: Icon(Icons.supervised_user_circle),
-                  onTap: signout,
+                  // onTap: signout,
                 ),
-                ListTile(
-                  title: Text("CONTACTS"),
-                  leading: Icon(Icons.call),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ContactsWidget(
-                                  email: userMail,
-                                )));
-                  },
-                ),
+                (isUser == true)
+                    ? ListTile(
+                        title: Text("CONTACTS"),
+                        leading: Icon(Icons.call),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ContactsWidget(
+                                        email: userMail,
+                                      )));
+                        },
+                      )
+                    : Container(),
                 ListTile(
                   title: Text("LOGOUT"),
                   leading: Icon(Icons.exit_to_app),

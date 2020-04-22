@@ -23,6 +23,8 @@ class _ShowAvailableState extends State<ShowAvailable> {
   String email, uname;
   Location location = new Location();
   LocationData _locationData;
+  String appointmentid = "";
+  String ambId = "";
 
   getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -41,6 +43,7 @@ class _ShowAvailableState extends State<ShowAvailable> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // backgroundColor: Colors.grey.shade800,
         appBar: AppBar(
           title: Text('Available Ambulances'),
         ),
@@ -64,26 +67,139 @@ class _ShowAvailableState extends State<ShowAvailable> {
                   print(snapshot.data);
 
                   // print(ds.data);
-                  return ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      print('printing documents');
-                      DocumentSnapshot ds = snapshot.data[index];
-                      if (ds.data['online'] == false) {
-                        return Container();
-                      } else {
-                        return GestureDetector(
-                          onTap: () {
-                            print('this ambulance selected');
-                            addAppointment(snapshot.data[index].documentID);
-                          },
-                          child: ListTile(
-                            title: Text(snapshot.data[index].documentID),
-                            // subtitle: Text(snapshot.data.),
-                          ),
-                        );
-                      }
-                    },
+                  return Stack(
+                    children: <Widget>[
+                      ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          print('printing documents');
+                          DocumentSnapshot ds = snapshot.data[index];
+                          if (ds.data['online'] == false) {
+                            return Container();
+                          } else {
+                            return GestureDetector(
+                              onTap: () {
+                                print('this ambulance selected');
+                                addAppointment(snapshot.data[index].documentID);
+                              },
+                              child: ListTile(
+                                title: Text(snapshot.data[index].documentID),
+                                // subtitle: Text(snapshot.data.),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      (appointmentid != "")
+                          ? Center(
+                              child: Material(
+                              borderRadius: BorderRadius.circular(20),
+                              elevation: 5,
+                              child: Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "Waiting for the response",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+                                    StreamBuilder(
+                                      stream: fireStoreDb
+                                          .collection('medical')
+                                          .document(ambId)
+                                          .collection('orders')
+                                          .document(dateToday)
+                                          .collection('appointments')
+                                          .document(appointmentid)
+                                          .snapshots(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.active) {
+                                          DocumentSnapshot ds = snapshot.data;
+                                          if (ds.data['status'] == 2) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 20),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Text(
+                                                      "Sorry the ambulance rejected the request"),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 20),
+                                                    child: FlatButton(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 20,
+                                                                vertical: 10),
+                                                        color: Colors.red,
+                                                        onPressed: () {
+                                                          Navigator.pushReplacement(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      ShowAvailable(
+                                                                          widget
+                                                                              .myLoc)));
+                                                        },
+                                                        child:
+                                                            Text("Try Again")),
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          } else if (ds.data['status'] == 3) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 20),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 20),
+                                                    child: Text(
+                                                        "The ambulance accepted the request and it will arrive soon"),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 20),
+                                                    child: FlatButton(
+                                                        color: Colors.green,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 10,
+                                                                horizontal: 20),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text(
+                                                            "Navigate to home")),
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          } else {
+                                            return Container();
+                                          }
+                                        } else {
+                                          return CircularProgressIndicator();
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ))
+                          : Container()
+                    ],
                   );
                   // return Container(
                   //   child: Text('has data'),
@@ -123,6 +239,11 @@ class _ShowAvailableState extends State<ShowAvailable> {
       'lat': _locationData.latitude,
       'lon': _locationData.longitude,
     }).then((onValue) {
+      print(onValue.documentID + " this is the new doc id of appointment");
+      setState(() {
+        appointmentid = onValue.documentID;
+        ambId = ambulanceId;
+      });
       print("new appointment added succesffuly");
     }).catchError((onError) {
       print(onError.toString());

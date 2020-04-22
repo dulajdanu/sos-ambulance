@@ -91,11 +91,11 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 20, top: 20),
+          padding: const EdgeInsets.only(right: 20, bottom: 20),
           child: Align(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.bottomRight,
             child: IconButton(
-              color: Colors.black,
+              color: Colors.red,
               icon: Icon(Icons.call),
               onPressed: () {
                 print("icon button presssed");
@@ -112,7 +112,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
                   print("ypu have contacts");
                 }
               },
-              iconSize: 60,
+              iconSize: 40,
             ),
           ),
         )
