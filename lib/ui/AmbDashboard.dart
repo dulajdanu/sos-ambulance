@@ -390,26 +390,58 @@ class _AmbDashboardState extends State<AmbDashboard> {
                   ),
                 ],
               ),
-              Visibility(
-                visible: haveNewAppointment,
-                child: GestureDetector(
-                  onTap: () {
-                    loadCurrentAppointment();
-                  },
-                  child: Container(
-                    height: 50,
-                    width: double.infinity,
-                    margin: EdgeInsets.only(top: 10),
-                    padding: EdgeInsets.all(16),
-                    child: Center(
-                        child: Text(
-                      "Current Appintment",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )),
-                    color: Colors.white,
-                  ),
-                ),
-              )
+              StreamBuilder(
+                stream: firestoreDb
+                    .collection('medical')
+                    .document(email)
+                    .collection('orders')
+                    .document(dateToday)
+                    .collection('appointments')
+                    // .where('status', isEqualTo: 0)
+                    .orderBy('time', descending: true)
+                    .snapshots(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    if (!snapshot.data.documents.isEmpty) {
+                      DocumentSnapshot documentSnapshotOfthePatient;
+                      for (DocumentSnapshot doc in snapshot.data.documents) {
+                        if (doc['status'] == 3) {
+                          documentSnapshotOfthePatient = doc;
+                          break;
+                        }
+                      }
+                      if (documentSnapshotOfthePatient != null) {
+                        return GestureDetector(
+                          onTap: () {
+                            loadCurrentAppointment();
+                          },
+                          child: Container(
+                            height: 50,
+                            width: double.infinity,
+                            margin: EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.all(16),
+                            child: Center(
+                                child: Text(
+                              "Current Appintment",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )),
+                            color: Colors.white,
+                          ),
+                        );
+                      } else {
+                        return Container();
+                      }
+
+                      // print(snapshot.data.documents.first.data);
+
+                    } else {
+                      return Container();
+                    }
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
             ],
           ),
         ),
