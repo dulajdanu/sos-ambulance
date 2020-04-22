@@ -103,6 +103,7 @@ class _AmbDashboardState extends State<AmbDashboard> {
                       docID: docID,
                       latLng: latLng,
                       patientEmail: patientMail,
+                      ambEmail: email,
                     )));
       }).catchError((onError) {
         print(onError.toString());
@@ -202,9 +203,36 @@ class _AmbDashboardState extends State<AmbDashboard> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 16.0),
-                                child: Text(
-                                  "0 visits today",
-                                  style: whiteText,
+                                child: StreamBuilder(
+                                  stream: firestoreDb
+                                      .collection('medical')
+                                      .document(email)
+                                      .collection('orders')
+                                      .document(dateToday)
+                                      .snapshots(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.active) {
+                                      if (snapshot.data['visits'] != null) {
+                                        return Text(
+                                          snapshot.data['visits'].toString() +
+                                              " visits today",
+                                          style: whiteText,
+                                        );
+                                      } else {
+                                        return Text(
+                                          "0 visits today",
+                                          style: whiteText,
+                                        );
+                                      }
+                                    } else {
+                                      return Text(
+                                        "0 visits today",
+                                        style: whiteText,
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
                             ],
@@ -556,6 +584,7 @@ class _AmbDashboardState extends State<AmbDashboard> {
                   latLng: LatLng(
                       prefs.getDouble('tempLat'), prefs.getDouble('tempLon')),
                   patientEmail: prefs.getString('patientMail'),
+                  ambEmail: email,
                 )));
   }
 
