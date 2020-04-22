@@ -72,30 +72,69 @@ class _AppointmentPageState extends State<AppointmentPage> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Patient details",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      SizedBox(
+                        width: 60,
+                      ),
+                      Icon(Icons.person)
+                    ],
+                  ),
                   SizedBox(
-                    height: 20,
+                    height: 60,
                   ),
-                  Text(
-                    "Patient details",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            " Patient e mail",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 16),
+                          ),
+                          Text(widget.patientEmail),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Icon(Icons.email)
+                    ],
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 40,
                   ),
-                  Text(
-                    " Patient e mail",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            " Patient username",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 16),
+                          ),
+                          Text(snapshot.data['uname'].toString()),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Icon(Icons.text_format)
+                    ],
                   ),
-                  Text(widget.patientEmail),
                   SizedBox(
-                    height: 20,
+                    height: 40,
                   ),
-                  Text(
-                    " Patient username",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                  ),
-                  Text(snapshot.data['uname'].toString()),
                   FlatButton(
                       color: Colors.green,
                       padding:
@@ -104,7 +143,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                         MapsLauncher.launchCoordinates(
                             widget.latLng.latitude, widget.latLng.longitude);
                       },
-                      child: Text("get directions")),
+                      child: Text("Get directions")),
                   SizedBox(
                     height: 30,
                   ),
