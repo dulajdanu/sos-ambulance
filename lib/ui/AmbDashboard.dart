@@ -20,6 +20,7 @@ class _AmbDashboardState extends State<AmbDashboard> {
   String onlineStatus = "Online";
   static var now = new DateTime.now();
   final firestoreDb = Firestore.instance;
+  bool haveNewAppointment = false;
 
   var dateToday = DateFormat("dd-MM-yyyy").format(now);
 
@@ -72,7 +73,17 @@ class _AmbDashboardState extends State<AmbDashboard> {
     });
   }
 
-  acceptAppointment(String docID, LatLng latLng, String patientMail) {
+  acceptAppointment(String docID, LatLng latLng, String patientMail) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      haveNewAppointment = true;
+      prefs.setString('tempDocId', docID);
+      prefs.setDouble('tempLat', latLng.latitude);
+      prefs.setDouble('tempLon', latLng.longitude);
+      prefs.setString('patientMail', patientMail);
+    });
+
     print("you have accepted the appointment");
     print(docID);
     setState(() {
@@ -379,13 +390,25 @@ class _AmbDashboardState extends State<AmbDashboard> {
                   ),
                 ],
               ),
-              Container(
-                height: 50,
-                width: double.infinity,
-                margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.all(16),
-                child: Text("dddd"),
-                color: Colors.white,
+              Visibility(
+                visible: haveNewAppointment,
+                child: GestureDetector(
+                  onTap: () {
+                    loadCurrentAppointment();
+                  },
+                  child: Container(
+                    height: 50,
+                    width: double.infinity,
+                    margin: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.all(16),
+                    child: Center(
+                        child: Text(
+                      "Current Appintment",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+                    color: Colors.white,
+                  ),
+                ),
               )
             ],
           ),
@@ -488,6 +511,20 @@ class _AmbDashboardState extends State<AmbDashboard> {
         ),
       ],
     );
+  }
+
+  loadCurrentAppointment() async {
+    print("load current appointment page");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AppointmentPage(
+                  docID: prefs.getString('tempDocId'),
+                  latLng: LatLng(
+                      prefs.getDouble('tempLat'), prefs.getDouble('tempLon')),
+                  patientEmail: prefs.getString('patientMail'),
+                )));
   }
 
   Widget _buildHeader() {
