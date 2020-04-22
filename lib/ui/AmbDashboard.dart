@@ -449,7 +449,7 @@ class _AmbDashboardState extends State<AmbDashboard> {
                             padding: EdgeInsets.all(16),
                             child: Center(
                                 child: Text(
-                              "Current Appintment",
+                              "Current Appointment",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             )),
                             color: Colors.white,

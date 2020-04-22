@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_state/flutter_phone_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContactsWidget extends StatefulWidget {
@@ -24,7 +25,9 @@ class _ContactsWidgetState extends State<ContactsWidget> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getStringList('contactsList') != null) {
       print("inside if");
-      contacts = prefs.getStringList('contactsList');
+      setState(() {
+        contacts = prefs.getStringList('contactsList');
+      });
     } else {
       print("inside else");
       contacts = [];
@@ -39,13 +42,17 @@ class _ContactsWidgetState extends State<ContactsWidget> {
     getData();
   }
 
-  addContact() {
+  addContact() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     if (contactFormKey.currentState.validate()) {
       contactFormKey.currentState.save();
       print(contactName);
       print(contactPhoneNum);
       setState(() {
         contacts.add(contactName + "#" + contactPhoneNum);
+        prefs.setStringList('contactsList', contacts);
+
         Navigator.pop(context);
         showFloatingButton = true;
       });
@@ -62,6 +69,7 @@ class _ContactsWidgetState extends State<ContactsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print("printing contacts");
     print(contacts);
     return Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -74,9 +82,15 @@ class _ContactsWidgetState extends State<ContactsWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(contacts.isNotEmpty
-                  ? "Your contacts"
-                  : "You don't have any contacts"),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Text(
+                  contacts.isNotEmpty
+                      ? "Your contacts"
+                      : "You don't have any contacts",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+              ),
               (contacts.isNotEmpty
                   ? Expanded(
                       child: ListView.builder(
@@ -84,10 +98,14 @@ class _ContactsWidgetState extends State<ContactsWidget> {
                           itemCount: contacts.length,
                           itemBuilder: (BuildContext context, int index) {
                             var value = contacts[index].split('#');
-                            return Container(
-                              height: 50,
-                              color: Colors.amber,
-                              child: Center(child: Text(value[0].toString())),
+                            return ListTile(
+                              title: Text(value[0]),
+                              subtitle: Text(value[1].toString()),
+                              trailing: IconButton(
+                                  icon: Icon(Icons.call),
+                                  onPressed: () {
+                                    FlutterPhoneState.startPhoneCall(value[1]);
+                                  }),
                             );
                           }))
                   : Container())

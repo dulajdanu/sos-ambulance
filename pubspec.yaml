@@ -38,6 +38,7 @@ dependencies:
   maps_launcher: ^1.2.0
 
   fluttertoast: ^4.0.1
+  flutter_phone_state: ^0.5.8
 
 
 
