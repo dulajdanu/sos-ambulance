@@ -44,8 +44,12 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> signout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     Navigator.pop(context);
     await widget.auth.signOut();
+    prefs.clear();
+    print("shared preferences data cleared");
     widget.logoutCallback();
   }
 

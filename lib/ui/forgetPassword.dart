@@ -121,7 +121,15 @@ class _ForgetPassState extends State<ForgetPass> {
                               fontSize: 30),
                         ),
                       ),
-                      Center(child: Text('forget password')),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Center(
+                          child: Text(
+                        'Forget password',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 22),
+                      )),
                     ],
                   ),
                   width: double.infinity,
