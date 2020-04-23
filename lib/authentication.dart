@@ -112,12 +112,10 @@ class Auth implements BaseAuth {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (isamb == false) {
-      firestoreDb.collection('users').document(email).setData({
+      await firestoreDb.collection('users').document(email).setData({
         'email': email,
         'uname': uname,
         'position': point.data,
-        'online': true,
-        'visits': 0
       }).then((val) {
         print("Account created successfully");
         prefs.setBool('user', true);
@@ -128,7 +126,7 @@ class Auth implements BaseAuth {
         print(onError.toString());
       });
     } else {
-      firestoreDb.collection('medical').document(email).setData({
+      await firestoreDb.collection('medical').document(email).setData({
         'email': email,
         'uname': uname,
         'position': point.data,

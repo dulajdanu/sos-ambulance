@@ -34,8 +34,8 @@ class _AmbDashboardState extends State<AmbDashboard> {
   @override
   void initState() {
     // TODO: implement initState
-    getData();
     super.initState();
+    getData();
   }
 
   @override
@@ -213,12 +213,20 @@ class _AmbDashboardState extends State<AmbDashboard> {
                                       AsyncSnapshot snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.active) {
-                                      if (snapshot.data['visits'] != null) {
-                                        return Text(
-                                          snapshot.data['visits'].toString() +
-                                              " visits today",
-                                          style: whiteText,
-                                        );
+                                      print(snapshot.data.exists);
+                                      if (snapshot.data.exists) {
+                                        if (snapshot.data['visits'] != null) {
+                                          return Text(
+                                            snapshot.data['visits'].toString() +
+                                                " visits today",
+                                            style: whiteText,
+                                          );
+                                        } else {
+                                          return Text(
+                                            "0 visits today",
+                                            style: whiteText,
+                                          );
+                                        }
                                       } else {
                                         return Text(
                                           "0 visits today",

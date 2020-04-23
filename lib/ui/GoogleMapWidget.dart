@@ -86,7 +86,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
                 decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(40)),
-                child: Text("Pick your location"),
+                child: Text("Share your location"),
               ),
             ),
           ),

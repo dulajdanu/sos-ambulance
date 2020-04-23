@@ -25,6 +25,7 @@ class _ShowAvailableState extends State<ShowAvailable> {
   LocationData _locationData;
   String appointmentid = "";
   String ambId = "";
+  bool gotResponse = false;
 
   getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -83,7 +84,8 @@ class _ShowAvailableState extends State<ShowAvailable> {
                                 addAppointment(snapshot.data[index].documentID);
                               },
                               child: ListTile(
-                                title: Text(snapshot.data[index].documentID),
+                                title: Text(snapshot.data[index]['uname']),
+                                trailing: Icon(Icons.local_hospital),
                                 // subtitle: Text(snapshot.data.),
                               ),
                             );

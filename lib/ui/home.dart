@@ -38,9 +38,8 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    getUserInfo();
-
     super.initState();
+    getUserInfo();
   }
 
   Future<void> signout() async {

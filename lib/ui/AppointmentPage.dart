@@ -55,6 +55,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
     }).catchError((onError) {
       print(onError.toString());
     });
+
+    Navigator.pop(context);
   }
 
   @override
